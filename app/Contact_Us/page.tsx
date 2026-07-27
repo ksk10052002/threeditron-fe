@@ -29,7 +29,7 @@ export default function Contact() {
       return;
     }
     axios
-      .post("http://localhost:8000/contact", form)
+      .post(`${process.env.NEXT_PUBLIC_API_URL}/contact`, form)
       .then((response) => {
         console.log(response.data.message);
         toast.success("Message sent succesfully");

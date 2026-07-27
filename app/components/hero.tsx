@@ -2,6 +2,8 @@
 
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import { useEffect } from "react";
+import axios from "axios";
 
 function DemoModel() {
   return (
@@ -12,7 +14,16 @@ function DemoModel() {
   );
 }
 
-export default function Hero() {
+const Hero = () => {
+  useEffect(() => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/wakeup`)
+      .then((response) => console.log(response.data))
+      .catch((err) => {
+        console.log("Axios error", err);
+        console.log("Unable to wake server from client side");
+      });
+  }, []);
   return (
     <section className="w-full bg-black text-white">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 px-6 py-20 items-center">
@@ -60,4 +71,5 @@ export default function Hero() {
       </div>
     </section>
   );
-}
+};
+export default Hero;
