@@ -5,14 +5,14 @@ export interface StlDataState {
   shipping: number | string;
   quantity: number | string;
   color: number | string;
-  stlFile: string | null;
+  stlFile: File | null;
   setWeight: (weight: number | string) => void;
   setMaterial: (material: number | string) => void;
   setInfill: (infill: number | string) => void;
   setShipping: (shipping: number | string) => void;
   setQuantity: (quantity: number | string) => void;
   setColor: (color: number | string) => void;
-  setStlFile: (stlFile: string | null) => void;
+  setStlFile: (stlFile: File | null) => void;
 }
 
 export interface RouterGuardState {

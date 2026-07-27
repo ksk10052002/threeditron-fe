@@ -22,7 +22,7 @@ const Stl = () => {
   const [infillCost, setInfillCost] = useState(0);
   const [deliveryCost, setDeliveryCost] = useState(0);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [stlFile, setStlFile] = useState<string | null>(null);
+  const [stlFile, setStlFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState("");
   const [volume, setVolume] = useState<number | null>(null);
   const [dimensions, setDimensions] = useState({
@@ -128,7 +128,7 @@ const Stl = () => {
     setFileUrl(url);
 
     setVolume(null);
-    setDimensions(null);
+    setDimensions({ x: 0, y: 0, z: 0 });
     setPrintTime(null);
 
     // clear drag memory
@@ -175,7 +175,7 @@ const Stl = () => {
 
     const baseMaterialCost = Number(weight) * materialRate;
 
-    const infillMultiplier = {
+    const infillMultiplier: Record<number, number> = {
       1: 0,
       2: 0.1,
       3: 0.3,
@@ -191,7 +191,7 @@ const Stl = () => {
     const infillAdjustment =
       baseMaterialCost * (infillMultiplier[infill as number] || 0);
 
-    const shippingMultiplier = {
+    const shippingMultiplier: Record<number, number> = {
       1: 0,
       2: 0.5,
       3: 1,
@@ -270,8 +270,8 @@ const Stl = () => {
                   key={fileUrl}
                   fileUrl={fileUrl}
                   color={color}
-                  onVolume={(v) => setVolume(v)}
-                  onDimensions={(d) => {
+                  onVolume={(v: number) => setVolume(v)}
+                  onDimensions={(d: { x: number; y: number; z: number }) => {
                     setDimensions(d);
 
                     if (d.x > 220 || d.y > 220 || d.z > 250) {
