@@ -1,3 +1,20 @@
+// export interface StlDataState {
+//   weight: number | string;
+//   material: number | string;
+//   infill: number | string;
+//   shipping: number | string;
+//   quantity: number | string;
+//   color: number | string;
+//   stlFile: File | null;
+//   setWeight: (weight: number | string) => void;
+//   setMaterial: (material: number | string) => void;
+//   setInfill: (infill: number | string) => void;
+//   setShipping: (shipping: number | string) => void;
+//   setQuantity: (quantity: number | string) => void;
+//   setColor: (color: number | string) => void;
+//   setStlFile: (stlFile: File | null) => void;
+// }
+
 export interface StlDataState {
   weight: number | string;
   material: number | string;
@@ -5,14 +22,25 @@ export interface StlDataState {
   shipping: number | string;
   quantity: number | string;
   color: number | string;
+
   stlFile: File | null;
+
+  // NEW
+  fileKey: string;
+  fileName: string;
+
   setWeight: (weight: number | string) => void;
   setMaterial: (material: number | string) => void;
   setInfill: (infill: number | string) => void;
   setShipping: (shipping: number | string) => void;
   setQuantity: (quantity: number | string) => void;
   setColor: (color: number | string) => void;
+
   setStlFile: (stlFile: File | null) => void;
+
+  // NEW
+  setFileKey: (fileKey: string) => void;
+  setFileName: (fileName: string) => void;
 }
 
 export interface RouterGuardState {

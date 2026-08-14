@@ -20,6 +20,16 @@ const CustomerDetails = () => {
     message: "",
   });
 
+  // const {
+  //   weight,
+  //   material,
+  //   infill,
+  //   shipping,
+  //   quantity,
+  //   color,
+  //   stlFile,
+  // } = stlDetailsStore();
+
   const {
     weight,
     material,
@@ -27,7 +37,8 @@ const CustomerDetails = () => {
     shipping,
     quantity,
     color,
-    stlFile,
+    fileKey,
+    fileName,
   } = stlDetailsStore();
 
   const handleChange = (
@@ -39,9 +50,155 @@ const CustomerDetails = () => {
     });
   };
 
-  const handleQuote = () => {
-    console.log("Quote requested", form);
+  // const handleQuote = () => {
+  //   console.log("Quote requested", form);
+  // };
+
+  const handleQuote = async () => {
+    try {
+
+      if (!fileKey) {
+        alert("Please upload STL first.");
+        return;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/uploads/confirm`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: form.name,
+            phone: form.phone,
+            email: form.email,
+            message: form.message,
+
+            material,
+            color,
+            quantity,
+            weight,
+            infill,
+            shipping,
+
+            fileKey,
+            fileName,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert("Quote Submitted Successfully!");
+      } else {
+        alert("Something went wrong.");
+      }
+
+    } catch (err) {
+
+      console.log(err);
+
+      alert("Something went wrong.");
+
+    }
   };
+
+  // const handleQuote = async () => {
+  //   try {
+
+  //     if (!stlFile) {
+  //       alert("Please upload an STL file first.");
+  //       return;
+  //     }
+
+  //     // STEP 1 - Ask backend for upload URL
+  //     const presignResponse = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/uploads/presign`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           fileName: stlFile.name,
+  //           fileType: stlFile.type || "application/sla",
+  //         }),
+  //       }
+  //     );
+
+  //     const presignData = await presignResponse.json();
+
+  //     if (!presignData.success) {
+  //       alert("Unable to generate upload URL.");
+  //       return;
+  //     }
+
+  //     // STEP 2 - Upload STL directly to Cloudflare R2
+  //     const uploadResponse = await fetch(presignData.uploadUrl, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": stlFile.type || "application/sla",
+  //       },
+  //       body: stlFile,
+  //     });
+
+  //     console.log("Status:", uploadResponse.status);
+  //     console.log("Status Text:", uploadResponse.statusText);
+
+  //     const responseText = await uploadResponse.text();
+  //     console.log(responseText);
+
+  //     if (!uploadResponse.ok) {
+  //       alert("File upload failed.");
+  //       return;
+  //     }
+
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quote`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           name: form.name,
+  //           phone: form.phone,
+  //           email: form.email,
+  //           message: form.message,
+
+  //           material,
+  //           color,
+  //           quantity,
+  //           weight,
+  //           infill,
+  //           shipping,
+
+  //           fileKey: presignData.key,
+  //           fileName: stlFile.name,
+  //         }),
+  //       }
+  //     );
+
+  //     const result = await response.json();
+
+  //     if (result.success) {
+  //       alert("Quote Submitted Successfully!");
+  //     } else {
+  //       alert("Something went wrong.");
+  //     }
+
+  //     alert("STL uploaded successfully!");
+
+  //     console.log("R2 Key:", presignData.key);
+
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Something went wrong.");
+  //   }
+  // };
+
   const handleCart = () => {
     console.log("Added to cart", form);
     setShowDelivery(true);
