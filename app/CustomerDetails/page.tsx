@@ -12,6 +12,8 @@ const CustomerDetails = () => {
   );
   const [check, setCheck] = useState<boolean>(false);
   const [showDelivery, setShowDelivery] = useState(false);
+  // const [fileKey, setFileKey] = useState<string>('');
+  // const [fileName, setFileName] = useState<string>('')
   // const weight = stlDetailsStore((s) => s.weight);
   const [form, setForm] = useState({
     name: "",
@@ -37,13 +39,9 @@ const CustomerDetails = () => {
     shipping,
     quantity,
     color,
-    fileKey,
-    fileName,
     stlFile,
   } = stlDetailsStore();
 
-  const setStoreFileKey = stlDetailsStore((s) => s.setFileKey);
-  const setStoreFileName = stlDetailsStore((s) => s.setFileName);
 
   const uploadToR2 = async (file: File) => {
     console.log("uploadToR2 started");
@@ -81,12 +79,14 @@ const CustomerDetails = () => {
 
       // Save into Zustand
       console.log("Saving filekey:", presignData.key);
-      setStoreFileKey(presignData.key);
-      setStoreFileName(file.name);
-
+      // setFileKey(presignData.key);
+      // setFileName(file.name);
       console.log("Setting uploadSuccess = true");
+      return { fileKey: presignData.key, fileName: file.name };
+
     } catch (err) {
       console.log("Upload Error", err);
+      return { "fileKey": "", "fileName": "" }
     }
   };
 
@@ -105,55 +105,59 @@ const CustomerDetails = () => {
 
   const handleQuote = async () => {
     try {
+
       if (stlFile !== null) {
-        await uploadToR2(stlFile);
-      } else {
-        throw Error("No STL file found.");
-      }
-      if (!fileKey) {
-        alert("Please upload STL first.");
-        return;
-      }
+        const { fileKey, fileName } = await uploadToR2(stlFile);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/uploads/confirm`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        if (!fileKey) {
+          alert("Please upload STL first.");
+          return;
+        }
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/uploads/confirm`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: form.name,
+              phone: form.phone,
+              email: form.email,
+              message: form.message,
+
+              material,
+              color,
+              quantity,
+              weight,
+              infill,
+              shipping,
+
+              fileKey,
+              fileName,
+            }),
           },
-          body: JSON.stringify({
-            name: form.name,
-            phone: form.phone,
-            email: form.email,
-            message: form.message,
+        );
 
-            material,
-            color,
-            quantity,
-            weight,
-            infill,
-            shipping,
+        const result = await response.json();
 
-            fileKey,
-            fileName,
-          }),
-        },
-      );
-
-      const result = await response.json();
-
-      if (result.success) {
-        alert("Quote Submitted Successfully!");
+        if (result.success) {
+          alert("Quote Submitted Successfully!");
+        } else {
+          alert("Something went wrong.");
+        }
       } else {
-        alert("Something went wrong.");
+        throw Error("Please upload an STL file first.")
       }
     } catch (err) {
       console.log(err);
 
       alert("Something went wrong.");
     }
-  };
+  }
+
+
 
   // const handleQuote = async () => {
   //   try {
@@ -309,11 +313,10 @@ const CustomerDetails = () => {
           className="w-full bg-red-100/20 border border-amber-400/40 text-yellow-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none"
         />
         <div
-          className={`overflow-hidden transition-all duration-500 ${
-            showDelivery
-              ? "max-h-[500px] opacity-100 mt-2"
-              : "max-h-0 opacity-0"
-          }`}
+          className={`overflow-hidden transition-all duration-500 ${showDelivery
+            ? "max-h-[500px] opacity-100 mt-2"
+            : "max-h-0 opacity-0"
+            }`}
         >
           {/* <input
           name="address"
