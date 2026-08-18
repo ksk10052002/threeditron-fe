@@ -33,13 +33,13 @@ export default function Footer() {
         {/* CONTACT */}
         <div>
           <h3 className="text-white font-semibold mb-3">Contact</h3>
-          <p>Email: support@kamal3d.com</p>
-          <p>Phone: +91 XXXXX XXXXX</p>
+          <p>Email: threeditron.1005@gmail.com</p>
+          <p>Phone: +91 7209827299</p>
         </div>
       </div>
 
       <div className="text-center text-gray-500 text-xs pb-5">
-        © 2026 Kamal 3D. All rights reserved.
+        © 2026 Threeditron. All rights reserved.
       </div>
     </footer>
   );
