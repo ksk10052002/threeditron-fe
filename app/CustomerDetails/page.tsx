@@ -39,7 +39,56 @@ const CustomerDetails = () => {
     color,
     fileKey,
     fileName,
+    stlFile,
   } = stlDetailsStore();
+
+  const setStoreFileKey = stlDetailsStore((s) => s.setFileKey);
+  const setStoreFileName = stlDetailsStore((s) => s.setFileName);
+
+  const uploadToR2 = async (file: File) => {
+    console.log("uploadToR2 started");
+    try {
+      // STEP 1
+      const presignResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/uploads/presign`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileType: file.type || "application/sla",
+          }),
+        },
+      );
+
+      const presignData = await presignResponse.json();
+
+      // STEP 2
+
+      const uploadResponse = await fetch(presignData.uploadUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type || "application/sla",
+        },
+        body: file,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Upload failed");
+      }
+
+      // Save into Zustand
+      console.log("Saving filekey:", presignData.key);
+      setStoreFileKey(presignData.key);
+      setStoreFileName(file.name);
+
+      console.log("Setting uploadSuccess = true");
+    } catch (err) {
+      console.log("Upload Error", err);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -56,7 +105,11 @@ const CustomerDetails = () => {
 
   const handleQuote = async () => {
     try {
-
+      if (stlFile !== null) {
+        await uploadToR2(stlFile);
+      } else {
+        throw Error("No STL file found.");
+      }
       if (!fileKey) {
         alert("Please upload STL first.");
         return;
@@ -85,7 +138,7 @@ const CustomerDetails = () => {
             fileKey,
             fileName,
           }),
-        }
+        },
       );
 
       const result = await response.json();
@@ -95,13 +148,10 @@ const CustomerDetails = () => {
       } else {
         alert("Something went wrong.");
       }
-
     } catch (err) {
-
       console.log(err);
 
       alert("Something went wrong.");
-
     }
   };
 
@@ -218,8 +268,6 @@ const CustomerDetails = () => {
     }
   }, []);
 
-
-
   if (!check) return null;
   return (
     // <div>
@@ -261,10 +309,11 @@ const CustomerDetails = () => {
           className="w-full bg-red-100/20 border border-amber-400/40 text-yellow-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none"
         />
         <div
-          className={`overflow-hidden transition-all duration-500 ${showDelivery
-            ? "max-h-[500px] opacity-100 mt-2"
-            : "max-h-0 opacity-0"
-            }`}
+          className={`overflow-hidden transition-all duration-500 ${
+            showDelivery
+              ? "max-h-[500px] opacity-100 mt-2"
+              : "max-h-0 opacity-0"
+          }`}
         >
           {/* <input
           name="address"

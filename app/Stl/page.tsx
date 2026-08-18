@@ -45,8 +45,7 @@ const Stl = () => {
   const setStoreQuantity = stlDetailsStore((s) => s.setQuantity);
   const setStoreColor = stlDetailsStore((s) => s.setColor);
   const setStoreStlFile = stlDetailsStore((s) => s.setStlFile);
-  const setStoreFileKey = stlDetailsStore((s) => s.setFileKey);
-  const setStoreFileName = stlDetailsStore((s) => s.setFileName);
+
   const enableAccessUserDetails = routerGuard((s) => s.enableAccessUserDetails);
   const disableAccessUserDetails = routerGuard(
     (s) => s.disableAccessUserDetails,
@@ -85,76 +84,6 @@ const Stl = () => {
     setWeight(Number(value));
   };
 
-  const uploadToR2 = async (file: File) => {
-    console.log("uploadToR2 started");
-    try {
-
-      setUploading(true);
-      setUploadProgress(10);
-      setUploadSuccess(false);
-
-      // STEP 1
-      const presignResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/uploads/presign`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fileName: file.name,
-            fileType: file.type || "application/sla",
-          }),
-        }
-      );
-
-      const presignData = await presignResponse.json();
-
-      setUploadProgress(35);
-
-      // STEP 2
-
-      const uploadResponse = await fetch(
-        presignData.uploadUrl,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": file.type || "application/sla",
-          },
-          body: file,
-        }
-      );
-
-      if (!uploadResponse.ok) {
-        throw new Error("Upload failed");
-      }
-
-      setUploadProgress(90);
-
-      // Save into Zustand
-      console.log("Saving filekey:", presignData.key);
-      setStoreFileKey(presignData.key);
-      setStoreFileName(file.name);
-
-      setUploadProgress(100);
-
-      console.log("Setting uploadSuccess = true");
-      setUploadSuccess(true);
-
-    } catch (err) {
-
-      console.log("Upload Error", err);
-
-      toast.error("Upload Failed");
-
-    } finally {
-
-      setUploading(false);
-
-    }
-
-  };
-
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -162,12 +91,14 @@ const Stl = () => {
     const url = URL.createObjectURL(file);
 
     setStlFile(file);
-    uploadToR2(file);
-
     setFileUrl(url);
     setVolume(null);
     setDimensions({ x: 0, y: 0, z: 0 });
     setPrintTime(null);
+    setUploading(true);
+    setUploadProgress(10);
+    setUploading(false);
+    setUploadSuccess(true);
 
     event.target.value = "";
 
@@ -202,13 +133,16 @@ const Stl = () => {
     const url = URL.createObjectURL(file);
 
     setStlFile(file);
-    uploadToR2(file);
     setFileUrl(url);
 
     setVolume(null);
     setDimensions({ x: 0, y: 0, z: 0 });
     setPrintTime(null);
 
+    setUploading(true);
+    setUploadProgress(10);
+    setUploading(false);
+    setUploadSuccess(true);
     // clear drag memory
     e.dataTransfer.clearData();
   };
@@ -327,7 +261,6 @@ const Stl = () => {
   }, [volume]);
 
   return (
-
     // <>
     /* <Hero /> */
 
@@ -377,30 +310,21 @@ const Stl = () => {
               </>
             )}
             {uploading && (
-
               <div className="mt-5 w-[420px]">
-
                 <div className="w-full bg-gray-700 rounded-full h-4">
-
                   <div
                     className="bg-yellow-400 h-4 rounded-full transition-all duration-300"
                     style={{
                       width: `${uploadProgress}%`,
                     }}
                   />
-
                 </div>
 
                 <p className="text-center mt-2">
-
                   Uploading STL...
-
                   {uploadProgress}%
-
                 </p>
-
               </div>
-
             )}
           </div>
 
@@ -454,18 +378,17 @@ const Stl = () => {
               </div>
               <br />
               <p className="text-white">
-                Uploading: {uploading ? "YES" : "NO"} |
-                Success: {uploadSuccess ? "YES" : "NO"} |
-                Progress: {uploadProgress}
+                Uploading: {uploading ? "YES" : "NO"} | Success:{" "}
+                {uploadSuccess ? "YES" : "NO"} | Progress: {uploadProgress}
               </p>
               {
-
                 <button
                   disabled={uploading || !uploadSuccess}
                   className={`mt-10 rounded-xl py-3 px-15 text-xl font-bold
-                    ${uploading || !uploadSuccess
-                      ? "bg-gray-600 cursor-not-allowed"
-                      : "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-amber-500 hover:to-yellow-500 text-black"
+                    ${
+                      uploading || !uploadSuccess
+                        ? "bg-gray-600 cursor-not-allowed"
+                        : "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-amber-500 hover:to-yellow-500 text-black"
                     }`}
                   onClick={handleProceed}
                 >
