@@ -91,11 +91,10 @@ export default function Contact() {
           <button
             type="submit"
             disabled={!form.name || !form.email || !form.message}
-            className={`w-full py-3 rounded-lg font-bold ${
-              !form.name || !form.email || !form.message
-                ? "bg-gray-600 cursor-not-allowed"
-                : "bg-yellow-500 hover:bg-yellow-400 text-black"
-            }`}
+            className={`w-full py-3 rounded-lg font-bold ${!form.name || !form.email || !form.message
+              ? "bg-gray-600 cursor-not-allowed"
+              : "bg-yellow-500 hover:bg-yellow-400 text-black"
+              }`}
           >
             Send Message
           </button>
