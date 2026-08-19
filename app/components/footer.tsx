@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -23,10 +24,10 @@ export default function Footer() {
         <div>
           <h3 className="text-white font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2">
-            <li>Home</li>
-            <li>STL Calculator</li>
-            <li>Services</li>
-            <li>Contact</li>
+            <li><Link href="/">Home</Link></li>
+            <li><Link href="/Stl">STL Calculator</Link></li>
+            <li><Link href="/Services">Services</Link></li>
+            <li><Link href="/Contact_Us">Contact</Link></li>
           </ul>
         </div>
 
