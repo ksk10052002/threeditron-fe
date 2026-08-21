@@ -15,22 +15,46 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    /* --foreground: #1358eb; */
     --foreground: #ededed;
   }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+
+  /* Important for mobile */
+  overflow-x: hidden;
 }
 
+
+/* Glass effect used in cards */
 .glass {
   background: rgba(255, 200, 200, 0.2);
   border-radius: 16px;
-  /* box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); */
   backdrop-filter: blur(8.2px);
   -webkit-backdrop-filter: blur(8.2px);
-  /* border: 1px solid rgba(255, 255, 255, 0.22); */
+}
+
+
+/* Better image handling */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+/* Remove default mobile tap highlight */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
 }
