@@ -385,10 +385,9 @@ const Stl = () => {
                 <button
                   disabled={uploading || !uploadSuccess}
                   className={`mt-10 rounded-xl py-3 px-15 text-xl font-bold
-                    ${
-                      uploading || !uploadSuccess
-                        ? "bg-gray-600 cursor-not-allowed"
-                        : "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-amber-500 hover:to-yellow-500 text-black"
+                    ${uploading || !uploadSuccess
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-amber-500 hover:to-yellow-500 text-black"
                     }`}
                   onClick={handleProceed}
                 >
