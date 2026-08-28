@@ -27,7 +27,7 @@ export default function Footer() {
             <li><Link href="/">Home</Link></li>
             <li><Link href="/Stl">STL Calculator</Link></li>
             <li><Link href="/Services">Services</Link></li>
-            <li><Link href="/projects">Projects</Link></li>
+            {/* <li><Link href="/projects">Projects</Link></li> */}
             {/* <li><Link href="/shop">Shop</Link></li> */}
             <li><Link href="/Contact_Us">Contact</Link></li>
           </ul>
