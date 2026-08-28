@@ -35,10 +35,10 @@ const Hero = () => {
             Get Instant Price
           </h1>
 
-          <p className="text-gray-400 mt-6 text-lg">
+          <h1 className="text-gray-400 mt-6 text-lg">
             Professional 3D printing service with instant STL analysis, volume
             calculation and automatic pricing.
-          </p>
+          </h1>
 
           <div className="flex gap-4 mt-8">
             <a

@@ -42,6 +42,18 @@ export default function Header() {
             Services
           </Link>
           <Link
+            href="/projects"
+            className="hover:text-yellow-500 transition hover:border border-[#FFEB3B] rounded-lg px-3 py-2"
+          >
+            Projects
+          </Link>
+          {/* <Link
+            href="/shop"
+            className="hover:text-yellow-500 transition hover:border border-[#FFEB3B] rounded-lg px-3 py-2"
+          >
+            Shop
+          </Link> */}
+          <Link
             href="/Contact_Us"
             className="hover:text-yellow-500 transition hover:border border-[#FFEB3B] rounded-lg px-3 py-2"
           >
