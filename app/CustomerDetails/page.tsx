@@ -31,7 +31,7 @@ const CustomerDetails = () => {
   const disableAccessUserDetails = routerGuard(
     (s) => s.disableAccessUserDetails,
   );
-  
+
   const [check, setCheck] = useState<boolean>(false);
   const [showDelivery, setShowDelivery] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,7 +65,7 @@ const CustomerDetails = () => {
     console.log("uploadToR2 started");
     try {
       const presignResponse = await fetch(
-        `/api/uploads/presign`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads/presign`,
         {
           method: "POST",
           headers: {
@@ -129,7 +129,7 @@ const CustomerDetails = () => {
 
       // Send post request to Next.js API route handler locally
       const response = await fetch(
-        "/api/uploads/confirm",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads/confirm`,
         {
           method: "POST",
           headers: {
@@ -325,7 +325,7 @@ const CustomerDetails = () => {
       style={{ backgroundImage: "url('/images/printer.png')" }}
     >
       <div className="max-w-md w-full mx-auto p-2">
-        
+
         {!submissionSuccess ? (
           /* FORM SUBMISSION UI */
           <div className="shadow-[0px_0px_35px_rgba(234,179,8,0.2)] ring-1 ring-yellow-500/50 p-6 rounded-xl border border-yellow-500/20 w-full space-y-4 glass text-white">
@@ -480,7 +480,7 @@ const CustomerDetails = () => {
               </div>
 
               <hr className="border-zinc-800" />
-              
+
               <div className="flex justify-between text-sm font-bold text-yellow-500">
                 <span>ESTIMATED TOTAL:</span>
                 <span>₹{quotationResult?.totalCost}</span>
@@ -508,13 +508,13 @@ const CustomerDetails = () => {
                 <span>Calculate Another Model</span>
               </button>
             </div>
-            
+
             <div className="text-[10px] text-zinc-500 text-center leading-normal">
               Our technician will reach out via WhatsApp at <strong>{form.phone}</strong> to confirm scheduling and finalize print features. Thank you!
             </div>
           </div>
         )}
-        
+
       </div>
     </div>
   );
