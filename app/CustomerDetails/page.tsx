@@ -136,7 +136,7 @@ const CustomerDetails = () => {
 
       // Send post request to Next.js API route handler locally
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads/confirm`,
         {
           method: "POST",
           headers: {
