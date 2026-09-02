@@ -43,7 +43,6 @@ const CustomerDetails = () => {
   const [showDelivery, setShowDelivery] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
-  const [quotationResult, setQuotationResult] = useState<any>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -66,6 +65,7 @@ const CustomerDetails = () => {
     stlFile,
     fileKey,
     fileName,
+    estimatedPrice,
   } = stlDetailsStore();
 
   const uploadToR2 = async (file: File) => {
@@ -98,11 +98,10 @@ const CustomerDetails = () => {
       if (!uploadResponse.ok) {
         throw new Error("Upload failed");
       }
-
+      console.log("R2 Upload Success", presignData);
       return { fileKey: presignData.key, fileName: file.name };
     } catch (err) {
-      console.log("Upload Error", err);
-      // Fallback: If B2 isn't fully set up, we return dummy keys for testing
+      console.log("Upload Error:", err);
       return { fileKey: `stl-${Date.now()}-${file.name}`, fileName: file.name };
     }
   };
@@ -122,8 +121,8 @@ const CustomerDetails = () => {
       return;
     }
 
-    setIsSubmitting(true);
     try {
+      setIsSubmitting(true);
       let finalFileKey = fileKey || "";
       let finalFileName = fileName || "";
 
@@ -135,6 +134,7 @@ const CustomerDetails = () => {
       }
 
       // Send post request to Next.js API route handler locally
+      console.log("running api confirm api call");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/uploads/confirm`,
         {
@@ -164,19 +164,24 @@ const CustomerDetails = () => {
           }),
         },
       );
-
       const result = await response.json();
+      console.log(
+        "confirm api call completed: ",
+        result?.message,
+        result?.quoteId,
+      );
 
       if (result.success) {
-        setQuotationResult(result);
         setSubmissionSuccess(true);
       } else {
         alert("Failed to submit quotation. Please try again.");
       }
+      console.log("run mc");
     } catch (err) {
       console.error(err);
       alert("Something went wrong during submission.");
     } finally {
+      console.log("Submission completed");
       setIsSubmitting(false);
     }
   };
@@ -191,7 +196,7 @@ const CustomerDetails = () => {
   };
 
   const handleDownloadPDF = () => {
-    if (!quotationResult) return;
+    if (!estimatedPrice) return;
 
     try {
       const doc = new jsPDF({
@@ -271,24 +276,23 @@ const CustomerDetails = () => {
       doc.text("ESTIMATED PRICE BREAKDOWN", 20, 156);
       doc.line(20, 158, 190, 158);
 
-      const bd = quotationResult.breakdown || {};
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
-      doc.text(`Base Material Printing Cost:`, 20, 166);
-      doc.text(`₹${bd.baseMaterialCost || 0}`, 160, 166, { align: "right" });
+      doc.text(`Base Material Printing Cost: `, 20, 166);
+      doc.text(`₹${material || 0}`, 160, 166, { align: "right" });
 
       doc.text(`Infill Density Adjustment:`, 20, 172);
-      doc.text(`₹${bd.infillAdjustment || 0}`, 160, 172, { align: "right" });
+      doc.text(`₹${infill || 0}`, 160, 172, { align: "right" });
 
       doc.text(`Shipping & Handling Fees:`, 20, 178);
-      doc.text(`₹${bd.shippingValue || 0}`, 160, 178, { align: "right" });
+      doc.text(`₹${shipping || 0}`, 160, 178, { align: "right" });
 
       doc.line(130, 182, 170, 182);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(12);
       doc.setTextColor(234, 179, 8);
-      doc.text(`Total Amount:`, 20, 190);
-      doc.text(`₹${quotationResult.totalCost || 0}`, 160, 190, {
+      doc.text(`Total Amount: ${estimatedPrice || 0}`, 20, 190);
+      doc.text(`₹${estimatedPrice || 0}`, 160, 190, {
         align: "right",
       });
 
@@ -523,7 +527,7 @@ const CustomerDetails = () => {
 
               <div className="flex justify-between text-sm font-bold text-yellow-500">
                 <span>ESTIMATED TOTAL:</span>
-                <span>₹{quotationResult?.totalCost}</span>
+                <span>₹{estimatedPrice}</span>
               </div>
             </div>
 

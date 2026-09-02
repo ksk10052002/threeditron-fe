@@ -21,7 +21,6 @@ const Stl = () => {
   const [materialCost, setMaterialCost] = useState(0);
   const [infillCost, setInfillCost] = useState(0);
   const [deliveryCost, setDeliveryCost] = useState(0);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [stlFile, setStlFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -45,6 +44,7 @@ const Stl = () => {
   const setStoreQuantity = stlDetailsStore((s) => s.setQuantity);
   const setStoreColor = stlDetailsStore((s) => s.setColor);
   const setStoreStlFile = stlDetailsStore((s) => s.setStlFile);
+  const { estimatedPrice, setEstimatedPrice } = stlDetailsStore();
 
   const enableAccessUserDetails = routerGuard((s) => s.enableAccessUserDetails);
   const disableAccessUserDetails = routerGuard(
@@ -108,7 +108,7 @@ const Stl = () => {
     setShipping(1);
     setQuantity(1);
     setWeight(0);
-    setTotalPrice(0);
+    setEstimatedPrice(0);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -220,7 +220,7 @@ const Stl = () => {
     setMaterialCost(Math.ceil(baseMaterialCost));
     setInfillCost(Math.ceil(infillAdjustment));
     setDeliveryCost(Math.ceil(shippingValue));
-    setTotalPrice(Math.ceil(total));
+    setEstimatedPrice(Math.ceil(total));
   };
 
   useEffect(() => {
@@ -385,9 +385,10 @@ const Stl = () => {
                 <button
                   disabled={uploading || !uploadSuccess}
                   className={`mt-10 rounded-xl py-3 px-15 text-xl font-bold
-                    ${uploading || !uploadSuccess
-                      ? "bg-gray-600 cursor-not-allowed"
-                      : "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-amber-500 hover:to-yellow-500 text-black"
+                    ${
+                      uploading || !uploadSuccess
+                        ? "bg-gray-600 cursor-not-allowed"
+                        : "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-amber-500 hover:to-yellow-500 text-black"
                     }`}
                   onClick={handleProceed}
                 >
@@ -499,7 +500,7 @@ const Stl = () => {
 
             <div className="flex justify-between font-bold text-lg">
               <span>TOTAL:</span>
-              <span>₹{totalPrice}</span>
+              <span>₹{estimatedPrice}</span>
             </div>
           </div>
         </div>

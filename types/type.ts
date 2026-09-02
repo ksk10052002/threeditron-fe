@@ -30,6 +30,7 @@ export interface StlDataState {
   // NEW
   fileKey: string;
   fileName: string;
+  estimatedPrice: number;
 
   setWeight: (weight: number | string) => void;
   setMaterial: (material: number | string) => void;
@@ -43,6 +44,7 @@ export interface StlDataState {
   // NEW
   setFileKey: (fileKey: string) => void;
   setFileName: (fileName: string) => void;
+  setEstimatedPrice: (estimatedPrice: number) => void;
 }
 
 export interface RouterGuardState {

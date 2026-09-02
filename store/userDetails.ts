@@ -18,8 +18,6 @@
 //   setStlFile: (stlFile) => set({ stlFile }),
 // }));
 
-
-
 import { StlDataState } from "@/types/type";
 import { create } from "zustand";
 
@@ -36,6 +34,7 @@ export const stlDetailsStore = create<StlDataState>((set) => ({
   // NEW
   fileKey: "",
   fileName: "",
+  estimatedPrice: 0,
 
   setWeight: (weight) => set({ weight }),
   setMaterial: (material) => set({ material }),
@@ -49,4 +48,5 @@ export const stlDetailsStore = create<StlDataState>((set) => ({
   // NEW
   setFileKey: (fileKey) => set({ fileKey }),
   setFileName: (fileName) => set({ fileName }),
+  setEstimatedPrice: (estimatedPrice) => set({ estimatedPrice }),
 }));
