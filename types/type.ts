@@ -1,19 +1,21 @@
-// export interface StlDataState {
-//   weight: number | string;
-//   material: number | string;
-//   infill: number | string;
-//   shipping: number | string;
-//   quantity: number | string;
-//   color: number | string;
-//   stlFile: File | null;
-//   setWeight: (weight: number | string) => void;
-//   setMaterial: (material: number | string) => void;
-//   setInfill: (infill: number | string) => void;
-//   setShipping: (shipping: number | string) => void;
-//   setQuantity: (quantity: number | string) => void;
-//   setColor: (color: number | string) => void;
-//   setStlFile: (stlFile: File | null) => void;
-// }
+export interface registerForm {
+  gender: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  countryCode: string;
+  mobileNumber: string;
+  parentMobile: string;
+  emailId: string;
+  dateOfBirth: string;
+  courseType: string;
+  choiceOfCourse: string;
+  country: string;
+  state: string;
+  city: string;
+  address: string;
+  agreedToTerms: boolean;
+}
 
 export interface StlDataState {
   weight: number | string;

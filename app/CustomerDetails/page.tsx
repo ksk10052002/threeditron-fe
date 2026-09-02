@@ -4,14 +4,21 @@ import { stlDetailsStore } from "@/store/userDetails";
 import { routerGuard } from "@/store/pageAllowStore";
 import { useRouter } from "next/navigation";
 import { jsPDF } from "jspdf";
-import { CheckCircle, Download, ArrowLeft, Mail, Printer, Phone } from "lucide-react";
+import {
+  CheckCircle,
+  Download,
+  ArrowLeft,
+  Mail,
+  Printer,
+  Phone,
+} from "lucide-react";
 
 const getMaterialLabel = (m: number | string): string => {
   const map: Record<number | string, string> = {
     1: "PLA (₹10/g)",
     2: "ABS (₹15/g)",
     3: "TPU (₹25/g)",
-    4: "PETG (₹40/g)"
+    4: "PETG (₹40/g)",
   };
   return map[m] || String(m);
 };
@@ -20,7 +27,7 @@ const getShippingLabel = (s: number | string): string => {
   const map: Record<number | string, string> = {
     1: "Standard (5-7 days)",
     2: "Express (2-3 days) [+50%]",
-    3: "Same Day (1-2 days) [+100%]"
+    3: "Same Day (1-2 days) [+100%]",
   };
   return map[s] || String(s);
 };
@@ -75,7 +82,7 @@ const CustomerDetails = () => {
             fileName: file.name,
             fileType: file.type || "application/sla",
           }),
-        }
+        },
       );
 
       const presignData = await presignResponse.json();
@@ -129,7 +136,7 @@ const CustomerDetails = () => {
 
       // Send post request to Next.js API route handler locally
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads/confirm`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/uploads`,
         {
           method: "POST",
           headers: {
@@ -155,7 +162,7 @@ const CustomerDetails = () => {
             fileKey: finalFileKey,
             fileName: finalFileName,
           }),
-        }
+        },
       );
 
       const result = await response.json();
@@ -190,7 +197,7 @@ const CustomerDetails = () => {
       const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
-        format: "a4"
+        format: "a4",
       });
 
       // Brand Logo Accent
@@ -235,7 +242,11 @@ const CustomerDetails = () => {
       doc.text(`Phone: ${form.phone}`, 20, 68);
       doc.text(`Email: ${form.email}`, 20, 74);
       if (showDelivery) {
-        doc.text(`Delivery Address: ${form.address || ""}, ${form.city || ""}, ${form.state || ""}, ${form.pincode || ""}`, 20, 80);
+        doc.text(
+          `Delivery Address: ${form.address || ""}, ${form.city || ""}, ${form.state || ""}, ${form.pincode || ""}`,
+          20,
+          80,
+        );
       }
 
       // Specifications Table
@@ -277,7 +288,9 @@ const CustomerDetails = () => {
       doc.setFontSize(12);
       doc.setTextColor(234, 179, 8);
       doc.text(`Total Amount:`, 20, 190);
-      doc.text(`₹${quotationResult.totalCost || 0}`, 160, 190, { align: "right" });
+      doc.text(`₹${quotationResult.totalCost || 0}`, 160, 190, {
+        align: "right",
+      });
 
       // Terms
       doc.setTextColor(17, 24, 39);
@@ -287,9 +300,21 @@ const CustomerDetails = () => {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.setTextColor(100, 100, 100);
-      doc.text("1. This quotation is calculated algorithmically from 3D design volumes.", 20, 217);
-      doc.text("2. Printability checks and fine-grain details will be manually validated by our team.", 20, 223);
-      doc.text("3. Our engineer will connect with you on WhatsApp/Phone to finalize colors and ship dates.", 20, 229);
+      doc.text(
+        "1. This quotation is calculated algorithmically from 3D design volumes.",
+        20,
+        217,
+      );
+      doc.text(
+        "2. Printability checks and fine-grain details will be manually validated by our team.",
+        20,
+        223,
+      );
+      doc.text(
+        "3. Our engineer will connect with you on WhatsApp/Phone to finalize colors and ship dates.",
+        20,
+        229,
+      );
 
       // Signature Area
       doc.setFont("helvetica", "bold");
@@ -300,7 +325,9 @@ const CustomerDetails = () => {
       doc.setFontSize(8);
       doc.text("Computer Generated Quotation", 140, 260);
 
-      doc.save(`Threeditron_Quote_${form.name.replace(/\s+/g, "_")}.pdf`);
+      // doc.save(`Threeditron_Quote_${form.name.replace(/\s+/g, "_")}.pdf`);
+      doc.autoPrint();
+      window.open(doc.output("bloburl"), "_blank");
     } catch (e) {
       console.error("PDF generation failed:", e);
       alert("Unable to generate PDF.");
@@ -325,7 +352,6 @@ const CustomerDetails = () => {
       style={{ backgroundImage: "url('/images/printer.png')" }}
     >
       <div className="max-w-md w-full mx-auto p-2">
-
         {!submissionSuccess ? (
           /* FORM SUBMISSION UI */
           <div className="shadow-[0px_0px_35px_rgba(234,179,8,0.2)] ring-1 ring-yellow-500/50 p-6 rounded-xl border border-yellow-500/20 w-full space-y-4 glass text-white">
@@ -334,7 +360,9 @@ const CustomerDetails = () => {
               <span>Submit Details for Quotation</span>
             </h2>
             <p className="text-xs text-gray-400">
-              Please fill in your details. We will process your STL file (<strong>{fileName || stlFile?.name || "Model File"}</strong>) and mail the quote estimation.
+              Please fill in your details. We will process your STL file (
+              <strong>{fileName || stlFile?.name || "Model File"}</strong>) and
+              mail the quote estimation.
             </p>
 
             <input
@@ -375,10 +403,11 @@ const CustomerDetails = () => {
             />
 
             <div
-              className={`overflow-hidden transition-all duration-500 ${showDelivery
-                ? "max-h-[500px] opacity-100 mt-2 space-y-3"
-                : "max-h-0 opacity-0"
-                }`}
+              className={`overflow-hidden transition-all duration-500 ${
+                showDelivery
+                  ? "max-h-[500px] opacity-100 mt-2 space-y-3"
+                  : "max-h-0 opacity-0"
+              }`}
             >
               <textarea
                 name="address"
@@ -446,10 +475,16 @@ const CustomerDetails = () => {
           /* SUCCESS INVOICE PANEL */
           <div className="shadow-[0px_0px_35px_rgba(16,185,129,0.25)] ring-1 ring-emerald-500 p-6 rounded-xl border border-emerald-500/30 w-full space-y-6 bg-black/90 text-white">
             <div className="text-center">
-              <CheckCircle className="mx-auto text-emerald-500 mb-2" size={48} />
-              <h2 className="text-xl font-bold text-emerald-400">Quote Logged Successfully!</h2>
+              <CheckCircle
+                className="mx-auto text-emerald-500 mb-2"
+                size={48}
+              />
+              <h2 className="text-xl font-bold text-emerald-400">
+                Quote Logged Successfully!
+              </h2>
               <p className="text-xs text-gray-400 mt-1">
-                A confirmation receipt has been sent to <strong>{form.email}</strong>.
+                A confirmation receipt has been sent to{" "}
+                <strong>{form.email}</strong>.
               </p>
             </div>
 
@@ -464,7 +499,12 @@ const CustomerDetails = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">File Name:</span>
-                <span className="truncate max-w-40" title={fileName || stlFile?.name}>{fileName || stlFile?.name}</span>
+                <span
+                  className="truncate max-w-40"
+                  title={fileName || stlFile?.name}
+                >
+                  {fileName || stlFile?.name}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Material:</span>
@@ -510,11 +550,12 @@ const CustomerDetails = () => {
             </div>
 
             <div className="text-[10px] text-zinc-500 text-center leading-normal">
-              Our technician will reach out via WhatsApp at <strong>{form.phone}</strong> to confirm scheduling and finalize print features. Thank you!
+              Our technician will reach out via WhatsApp at{" "}
+              <strong>{form.phone}</strong> to confirm scheduling and finalize
+              print features. Thank you!
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

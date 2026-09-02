@@ -8,10 +8,10 @@ function getMaterialName(m: number | string): string {
     2: "ABS (₹15/g)",
     3: "TPU (₹25/g)",
     4: "PETG (₹40/g)",
-    "PLA": "PLA (₹10/g)",
-    "ABS": "ABS (₹15/g)",
-    "TPU": "TPU (₹25/g)",
-    "PETG": "PETG (₹40/g)"
+    PLA: "PLA (₹10/g)",
+    ABS: "ABS (₹15/g)",
+    TPU: "TPU (₹25/g)",
+    PETG: "PETG (₹40/g)",
   };
   return map[m] || String(m);
 }
@@ -21,7 +21,7 @@ function getShippingName(s: number | string): string {
   const map: Record<number | string, string> = {
     1: "Standard (5-7 days)",
     2: "Express (2-3 days) [+50%]",
-    3: "Same Day (1-2 days) [+100%]"
+    3: "Same Day (1-2 days) [+100%]",
   };
   return map[s] || String(s);
 }
@@ -47,23 +47,55 @@ export async function POST(request: Request) {
     // 1. Calculate Price Breakdown Server-side
     const numWeight = Number(weight || 0);
     const numQuantity = Number(quantity || 1);
-    
+
     let materialRate = 0;
-    if (material === 1 || material === "1" || String(material).toLowerCase() === "pla") materialRate = 10;
-    else if (material === 2 || material === "2" || String(material).toLowerCase() === "abs") materialRate = 15;
-    else if (material === 3 || material === "3" || String(material).toLowerCase() === "tpu") materialRate = 25;
-    else if (material === 4 || material === "4" || String(material).toLowerCase() === "petg") materialRate = 40;
+    if (
+      material === 1 ||
+      material === "1" ||
+      String(material).toLowerCase() === "pla"
+    )
+      materialRate = 10;
+    else if (
+      material === 2 ||
+      material === "2" ||
+      String(material).toLowerCase() === "abs"
+    )
+      materialRate = 15;
+    else if (
+      material === 3 ||
+      material === "3" ||
+      String(material).toLowerCase() === "tpu"
+    )
+      materialRate = 25;
+    else if (
+      material === 4 ||
+      material === "4" ||
+      String(material).toLowerCase() === "petg"
+    )
+      materialRate = 40;
 
     const baseMaterialCost = numWeight * materialRate;
 
     const infillMultiplier: Record<number, number> = {
-      1: 0, 2: 0.1, 3: 0.3, 4: 0.4, 5: 0.5, 6: 0.6, 7: 0.7, 8: 0.8, 9: 0.9, 10: 1
+      1: 0,
+      2: 0.1,
+      3: 0.3,
+      4: 0.4,
+      5: 0.5,
+      6: 0.6,
+      7: 0.7,
+      8: 0.8,
+      9: 0.9,
+      10: 1,
     };
     const infillKey = Number(infill || 1);
-    const infillAdjustment = baseMaterialCost * (infillMultiplier[infillKey] || 0);
+    const infillAdjustment =
+      baseMaterialCost * (infillMultiplier[infillKey] || 0);
 
     const shippingMultiplier: Record<number, number> = {
-      1: 0, 2: 0.5, 3: 1
+      1: 0,
+      2: 0.5,
+      3: 1,
     };
     const shippingKey = Number(shipping || 1);
     const subtotal = (baseMaterialCost + infillAdjustment) * numQuantity;
@@ -74,18 +106,14 @@ export async function POST(request: Request) {
     const resolvedMaterial = getMaterialName(material);
     const resolvedInfill = `${Number(infill) * 10}%`;
     const resolvedShipping = getShippingName(shipping);
-    
-    // File Download Link from Backblaze B2
-    const b2Bucket = process.env.B2_BUCKET_NAME || "threeditron";
-    const b2Endpoint = process.env.B2_ENDPOINT || "s3.us-east-005.backblazeb2.com";
-    const downloadUrl = `https://${b2Bucket}.${b2Endpoint}/${fileKey}`;
 
     // 3. Setup Nodemailer Transporter
     const host = process.env.SMTP_HOST || "smtp.gmail.com";
     const port = Number(process.env.SMTP_PORT || 587);
     const user = process.env.SMTP_USER;
     const pass = process.env.SMTP_PASS;
-    const adminEmail = process.env.CONTACT_EMAIL || "threeditron.1005@gmail.com";
+    const adminEmail =
+      process.env.CONTACT_EMAIL || "threeditron.1005@gmail.com";
 
     let emailStatus = "Not Sent (SMTP config missing)";
 
@@ -194,16 +222,6 @@ export async function POST(request: Request) {
               <p><strong>Estimated Quote:</strong> ₹${totalCost}</p>
 
               <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-
-              <h3 style="color: #eab308;">STL Model Access</h3>
-              <p>The file is stored securely on Backblaze B2.</p>
-              <p>
-                <a href="${downloadUrl}" style="display: inline-block; background-color: #eab308; color: #000; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-weight: bold;" target="_blank">
-                  Download STL File
-                </a>
-              </p>
-              <p style="font-size: 10px; color: #888; overflow-wrap: break-word;">${downloadUrl}</p>
-            </div>
           </div>
         `,
       };
@@ -212,12 +230,14 @@ export async function POST(request: Request) {
         await transporter.sendMail(clientMailOptions);
         await transporter.sendMail(adminMailOptions);
         emailStatus = "Emails Sent Successfully";
-      } catch (err: any) {
+      } catch (err) {
         console.error("Nodemailer Send Error:", err);
-        emailStatus = `SMTP Connection Succeeded but Sending Failed: ${err.message}`;
+        emailStatus = `SMTP Connection Succeeded but Sending Failed: ${err instanceof Error ? err.message : String(err)}`;
       }
     } else {
-      console.warn("SMTP credentials are missing or default. Email notification skipped.");
+      console.warn(
+        "SMTP credentials are missing or default. Email notification skipped.",
+      );
     }
 
     return NextResponse.json({
@@ -228,15 +248,17 @@ export async function POST(request: Request) {
       breakdown: {
         baseMaterialCost: Math.ceil(baseMaterialCost),
         infillAdjustment: Math.ceil(infillAdjustment),
-        shippingValue: Math.ceil(shippingValue)
-      }
+        shippingValue: Math.ceil(shippingValue),
+      },
     });
-
-  } catch (error: any) {
-    console.error("Quote Confirm API Error:", error);
+  } catch (error) {
+    console.error(
+      "Quote Confirm API Error:",
+      error instanceof Error ? error.message : String(error),
+    );
     return NextResponse.json(
       { success: false, error: "Failed to confirm quotation request." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
