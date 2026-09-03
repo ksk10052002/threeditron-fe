@@ -93,6 +93,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -127,7 +128,7 @@ export default function RootLayout({
             border: "1px solid #eab308",
           },
         }} reverseOrder={false} />
-        <div className="max-w-[1200px] mx-auto">{children}</div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
 
         <Footer />
 
