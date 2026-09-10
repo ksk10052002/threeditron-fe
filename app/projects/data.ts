@@ -6,7 +6,7 @@ export interface Project {
   details: string;
   tech: string[];
   features: string[];
-  status: "Completed" | "Open Source" | "In Development";
+  status: "Completed" | "Open Source" | "In Development" | "Prototype Development";
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   images: string[];
   video: string;
