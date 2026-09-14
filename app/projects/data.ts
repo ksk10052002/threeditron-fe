@@ -176,44 +176,63 @@ void loop(){
     ]
   },
   {
-    id: "macro-keypad",
-    title: "Threeditron Macro Keyboard (MacroPad)",
-    category: "pcb",
-    description: "A 12-key hot-swappable mechanical macro keypad featuring custom rotary encoders and RGB backlighting.",
-    details: "Designed custom PCB layout in KiCad and printed the layered case using dual-color PLA. Runs on QMK/VIAL firmware for easy keymapping profiles.",
-    tech: ["RP2040", "Cherry MX Switches", "Custom PCB", "Dual-color PLA", "QMK Firmware"],
-    features: ["Layer switching", "Per-key RGB", "Dual metal rotary encoders", "Vial configurator support"],
-    status: "Open Source",
-    difficulty: "Beginner",
-    images: [
-      "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=800&q=80"
+    id: "smart-conveyor-system",
+    title: "Smart Conveyor Belt System with Battery Management",
+    category: "integrated",
+    description: "An automated conveyor platform integrating motor control, sensing, and intelligent power management.",
+    details: "A custom conveyor automation system designed for material movement and industrial applications. The system combines DC motor control, object detection sensors, control electronics, and battery management for reliable industrial operation.",
+    tech: [
+      "Arduino",
+      "DC Gear Motor",
+      "Motor Driver",
+      "IR Sensors",
+      "BMS",
+      "Lithium Battery System"
     ],
-    video: "https://assets.mixkit.co/videos/preview/mixkit-mechanical-keyboard-keys-pressed-33319-large.mp4",
-    schematics: "RP2040 GPIO pins mapped directly to the 4x3 matrix. Diodes (1N4148) are placed in series with each key switch to prevent ghosting. WS2812B RGB LEDs are chained together on GPIO pin 23.",
-    codeSnippet: `#pragma once
-#define TAPPING_TERM 200
+    features: [
+      "Automatic object detection",
+      "Controlled material movement",
+      "Battery powered operation",
+      "Industrial automation concept",
+      "Expandable sensor integration"
+    ],
+    status: "Completed",
+    difficulty: "Intermediate",
+    images: [
+      "/images/conveyer_belt/img-1.jpg",
+      "/images/conveyer_belt/img-2.jpg",
+      "/images/conveyer_belt/img-3.jpg",
+    ],
+    video: "",
+    schematics: "Microcontroller processes sensor inputs and controls conveyor motor through motor driver circuitry. Battery system uses BMS protection for safe operation and charging.",
+    codeSnippet: `
+#define MOTOR_PIN 5
+#define SENSOR_PIN 7
 
-// Map key matrix pins
-#define MATRIX_ROW_PINS { GP0, GP1, GP2 }
-#define MATRIX_COL_PINS { GP3, GP4, GP5, GP6 }
+void setup(){
+ pinMode(MOTOR_PIN,OUTPUT);
+ pinMode(SENSOR_PIN,INPUT);
+}
 
-// Rotary Encoders
-#define ENCODERS_PAD_A { GP10, GP12 }
-#define ENCODERS_PAD_B { GP11, GP13 }
-#define ENCODER_RESOLUTION 4
+void loop(){
 
-// RGB Backlight
-#define RGB_DI_PIN GP23
-#define RGBLED_NUM 12`,
+ if(digitalRead(SENSOR_PIN)){
+   digitalWrite(MOTOR_PIN,HIGH);
+ }
+ else{
+   digitalWrite(MOTOR_PIN,LOW);
+ }
+
+}
+`,
     bom: [
-      { item: "RP2040 Zero or Pi Pico Board", qty: 1 },
-      { item: "Cherry MX Mechanical Switches", qty: 12 },
-      { item: "Hot-swap Switch Sockets", qty: 12 },
-      { item: "WS2812B RGB LEDs", qty: 12 },
-      { item: "EC11 Rotary Encoders", qty: 2 },
-      { item: "1N4148 Switching Diodes", qty: 12 },
-      { item: "3D Printed Case & Plate (PLA)", qty: 1 }
+      { item: "Arduino Controller", qty: 1 },
+      { item: "DC Gear Motor", qty: 1 },
+      { item: "Motor Driver Module", qty: 1 },
+      { item: "IR Object Detection Sensor", qty: 2 },
+      { item: "Lithium Battery Pack", qty: 1 },
+      { item: "Battery Management System (BMS)", qty: 1 },
+      { item: "Conveyor Belt Assembly", qty: 1 }
     ]
   },
   {
