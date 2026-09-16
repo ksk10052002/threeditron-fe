@@ -168,3 +168,43 @@
     animation: none !important;
   }
 }
+/* Responsive adjustments for mobile */
+@media (max-width: 640px) {
+  .split-flap-text {
+    --split-flap-font-size: 32px;
+    --split-flap-gap: 4px;
+    --split-flap-radius: 4px;
+  }
+}
+@media (max-width: 480px) {
+  .split-flap-text {
+    --split-flap-font-size: 24px;
+    --split-flap-gap: 2px;
+    --split-flap-radius: 2px;
+  }
+}
+/* Ensure component does not overflow on small screens */
+.split-flap-text {
+  width: 100%;
+  flex-wrap: wrap;
+}
+/* Additional mobile shrink for extremely small screens */
+@media (max-width: 360px) {
+  .split-flap-text {
+    --split-flap-font-size: 20px;
+    --split-flap-gap: 1px;
+    --split-flap-radius: 1px;
+  }
+}
+/* Prevent wrapping by reducing whitespace handling */
+.split-flap-text {
+  white-space: nowrap;
+}
+/* General mobile shrinking */
+@media (max-width: 640px) {
+  .split-flap-text {
+    --split-flap-font-size: 30px;
+    --split-flap-gap: 3px;
+    --split-flap-radius: 3px;
+  }
+}

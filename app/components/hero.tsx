@@ -30,7 +30,7 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 lg:gap-10 px-4 sm:px-6 py-12 sm:py-16 lg:py-20 items-center">
         {/* LEFT TEXT */}
         <div>
-          <div className="mb-5">
+          <div className="mb-5 mx-auto max-w-full">
             <SplitFlapText
               words={["THREEDITRON", "CIRCUIT LAB", "3D PRINTLAB"]}
               // text={"THREEDITRON"}

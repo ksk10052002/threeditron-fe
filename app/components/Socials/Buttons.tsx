@@ -16,7 +16,7 @@ const Buttons = ({
   return (
     //   h-10 w-10 bg-red-500 my-2 transition-all duration-300 hover:translate-x-3 hover:scale-110 rounded-xl /*
     <motion.div
-      className="h-10 w-10 bg-slate-500 my-2 rounded-xl"
+      className="md:h-10 md:w-10 h-8 w-8 bg-slate-500 md:my-2 rounded-xl md:scale-100 scale-80"
       whileHover={{
         x: 15,
         scale: 1.2,
