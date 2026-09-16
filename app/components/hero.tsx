@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useEffect } from "react";
 import axios from "axios";
+import SplitFlapText from "../component/SplitFlapText";
 
 function DemoModel() {
   return (
@@ -29,7 +30,26 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 lg:gap-10 px-4 sm:px-6 py-12 sm:py-16 lg:py-20 items-center">
         {/* LEFT TEXT */}
         <div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+          <div className="mb-5">
+            <SplitFlapText
+              words={["THREEDITRON", "CIRCUIT LAB", "3D PRINTLAB"]}
+              // text={"THREEDITRON"}
+              text
+              flipDuration={0.12}
+              stagger={0.06}
+              cycleDelay={2400}
+              charset="alphanumeric"
+              flipsPerChar={8}
+              tileColor="#111827"
+              textColor="#f8fafc"
+              tileRadius={8}
+              gap={6}
+              fontSize={52}
+              loop={true}
+              padTo={11}
+            />
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-4xl font-bold leading-tight">
             Upload Your <span className="text-yellow-500">3D Model</span>
             <br />
             Get Instant Price
