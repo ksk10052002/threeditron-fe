@@ -26,7 +26,7 @@ const Hero = () => {
       });
   }, []);
   return (
-    <section className="w-full bg-black text-white">
+    <section className="w-full bg-black text-white min-h-full">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 lg:gap-10 px-4 sm:px-6 py-12 sm:py-16 lg:py-20 items-center">
         {/* LEFT TEXT */}
         <div>

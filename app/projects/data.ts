@@ -236,115 +236,138 @@ void loop(){
     ]
   },
   {
-    id: "smart-soldering-iron",
-    title: "Portable Smart Soldering Controller",
-    category: "pcb",
-    description: "A compact temperature-controlled soldering station motherboard compatible with T12 tips.",
-    details: "Features fast heating, temperature calibration profiles, auto-sleep mode, and an intuitive UI on a 0.96-inch OLED screen. Housed in a flame-retardant ABS filament case.",
-    tech: ["STM32", "OLED Display", "Custom Power Stage", "ABS-FR (Flame Retardant) Case"],
-    features: ["8-second heat up", "Motion-detect sleep", "USB-C PD power", "Active thermal protections"],
-    status: "In Development",
-    difficulty: "Advanced",
-    images: [
-      "https://images.unsplash.com/photo-1517055729445-fa7d27394b48?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"
-    ],
-    video: "https://assets.mixkit.co/videos/preview/mixkit-circuit-board-of-a-computer-close-up-23114-large.mp4",
-    schematics: "N-Channel MOSFET (AOD4184) driven by STM32 PWM to switch T12 heater core. Internal ADC measures voltage drop on thermocouple during PWM off cycle. PD Trigger Chip (IP2721) sets negotiation to 20V.",
-    codeSnippet: `#define TEMP_PIN A0
-#define HEATER_PWM_PIN 9
-#define STANDBY_PIN 2
-
-float Kp = 12.0, Ki = 0.5, Kd = 4.0;
-float error, lastError, integral, derivative;
-int setpoint = 320; // 320 deg C
-
-void setup() {
-  pinMode(HEATER_PWM_PIN, OUTPUT);
-  pinMode(STANDBY_PIN, INPUT_PULLUP);
-}
-
-void loop() {
-  int currentTemp = readThermocouple();
-  if (digitalRead(STANDBY_PIN) == LOW) {
-    setpoint = 150; // Sleep mode
-  } else {
-    setpoint = 320;
-  }
-  
-  // PID math
-  error = setpoint - currentTemp;
-  integral += error;
-  derivative = error - lastError;
-  int output = Kp*error + Ki*integral + Kd*derivative;
-  
-  analogWrite(HEATER_PWM_PIN, constrain(output, 0, 255));
-  lastError = error;
-  delay(100);
-}`,
-    bom: [
-      { item: "STM32F103C8T6 (Blue Pill)", qty: 1 },
-      { item: "0.96 inch SSD1306 I2C OLED", qty: 1 },
-      { item: "AOD4184 N-channel Power MOSFET", qty: 1 },
-      { item: "LM358 Op-Amp (Thermocouple Amp)", qty: 1 },
-      { item: "USB-C PD Decoy/Trigger board", qty: 1 },
-      { item: "3D Printed ABS-FR Case", qty: 1 }
-    ]
-  },
-  {
-    id: "filament-dryer",
-    title: "Smart Filament Dry-Box Controller",
+    id: "dual-axis-solar-tracker",
+    title: "Dual Axis Solar Tracking System with Battery Storage",
     category: "integrated",
-    description: "An automated enclosure heater and dehumidifier to keep 3D printing filament dry during printing.",
-    details: "Measures real-time weight to compute remaining filament, controls a PTC heater block safely, and activates exhaust fan on high humidity levels.",
-    tech: ["Arduino Nano", "Load Cell (HX711)", "PTC Heater", "PETG High-Temp Case", "OLED Screen"],
-    features: ["Automated temperature regulation", "Spool weight estimator", "PTC safe thermal cutoff", "Humidity and Temp sensors"],
+    description: "An Arduino-based dual-axis solar tracking platform that automatically aligns a solar panel with maximum sunlight intensity using four LDR sensors and servo-controlled movement.",
+    details: "Designed and developed an automatic solar tracking system using a 10W solar panel, four LDR sensors, Arduino UNO, and dual MG996R servo motors. The system continuously monitors sunlight direction and adjusts both horizontal and vertical axes to maintain optimum solar exposure. An 11.1V lithium battery pack stores generated energy for later usage.",
+    tech: [
+      "Arduino UNO",
+      "10W Solar Panel",
+      "MG996R Servo Motors",
+      "4× LDR Light Sensors",
+      "11.1V Li-ion Battery Pack",
+      "Solar Charge Controller",
+      "3D Printed Mechanical Frame"
+    ],
+    features: [
+      "Automatic dual-axis sunlight tracking",
+      "Four-direction light sensing",
+      "Servo-based horizontal and vertical movement",
+      "Solar energy harvesting with battery storage",
+      "Improved solar panel efficiency",
+      "Custom mechanical tracking structure"
+    ],
     status: "Completed",
     difficulty: "Intermediate",
     images: [
-      "https://images.unsplash.com/photo-1615840287214-7fe58a8b668f?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"
+      "/images/dual_axis_solar_tracker/img_4.jpg",
+      "/images/dual_axis_solar_tracker/img_1.jpg",
+      "/images/dual_axis_solar_tracker/img_2.jpg",
+      "/images/dual_axis_solar_tracker/img_3.jpg"
     ],
-    video: "https://assets.mixkit.co/videos/preview/mixkit-circuit-board-of-a-computer-close-up-23114-large.mp4",
-    schematics: "PTC 100W heater switched by 10A SPDT relay module on pin D4. HX711 Load Cell amplifier connected to pins D2 (DATA) and D3 (CLK). DHT22 temperature/humidity sensor on pin D5.",
-    codeSnippet: `#include "HX711.h"
-#include <DHT.h>
+    video: "",
+    schematics: "Four LDR sensors are arranged around the solar panel to detect light intensity differences. Arduino UNO processes analog values and generates PWM signals to control two MG996R servo motors. One servo controls horizontal rotation while the second servo adjusts vertical tilt. Solar output is stored through a battery charging system.",
+    codeSnippet: `
+    #include <Servo.h>
 
-#define DOUT  2
-#define CLK   3
-#define RELAY_PIN 4
+    Servo horizontalServo;
+    Servo verticalServo;
 
-HX711 scale;
-DHT dht(5, DHT22);
+    int ldrTopLeft = A0;
+    int ldrTopRight = A1;
+    int ldrBottomLeft = A2;
+    int ldrBottomRight = A3;
 
-void setup() {
-  scale.begin(DOUT, CLK);
-  scale.set_scale(420.0); // Calibration factor
-  scale.tare();
-  dht.begin();
-  pinMode(RELAY_PIN, OUTPUT);
-}
+    void setup()
+    {
+      horizontalServo.attach(9);
+      verticalServo.attach(10);
 
-void loop() {
-  float temp = dht.readTemperature();
-  float hum = dht.readHumidity();
-  float weight = scale.get_units(5); // spool weight
-  
-  if (temp < 45.0 && hum > 25.0) {
-    digitalWrite(RELAY_PIN, HIGH); // Turn heater ON
-  } else if (temp > 50.0 || hum < 15.0) {
-    digitalWrite(RELAY_PIN, LOW);  // Turn heater OFF
-  }
-  delay(2000);
-}`,
+      horizontalServo.write(90);
+      verticalServo.write(90);
+    }
+
+    void loop()
+    {
+      int TL = analogRead(ldrTopLeft);
+      int TR = analogRead(ldrTopRight);
+      int BL = analogRead(ldrBottomLeft);
+      int BR = analogRead(ldrBottomRight);
+
+      int verticalError = (TL + TR) - (BL + BR);
+      int horizontalError = (TL + BL) - (TR + BR);
+
+      // Servo adjustment logic
+
+      delay(100);
+    }
+    `,
     bom: [
-      { item: "Arduino Nano board", qty: 1 },
-      { item: "HX711 Weighing Sensor Module", qty: 1 },
-      { item: "5kg Load Cell Bar", qty: 1 },
-      { item: "100W 12V PTC Heating Element", qty: 1 },
-      { item: "DHT22 Humidty/Temp sensor", qty: 1 },
-      { item: "12V 10A Relay Module", qty: 1 },
-      { item: "3D Printed Spool rollers and Enclosure (PETG)", qty: 1 }
+      { item: "10W Solar Panel", qty: 1 },
+      { item: "Arduino UNO", qty: 1 },
+      { item: "MG996R Metal Gear Servo Motor", qty: 2 },
+      { item: "LDR Light Sensors", qty: 4 },
+      { item: "11.1V Lithium Battery Pack", qty: 1 },
+      { item: "Solar Charge Controller", qty: 1 },
+      { item: "Buck Converter Module", qty: 1 },
+      { item: "3D Printed Solar Tracking Frame", qty: 1 }
     ]
-  }
+  },
+  //   {
+  //     id: "filament-dryer",
+  //     title: "Smart Filament Dry-Box Controller",
+  //     category: "integrated",
+  //     description: "An automated enclosure heater and dehumidifier to keep 3D printing filament dry during printing.",
+  //     details: "Measures real-time weight to compute remaining filament, controls a PTC heater block safely, and activates exhaust fan on high humidity levels.",
+  //     tech: ["Arduino Nano", "Load Cell (HX711)", "PTC Heater", "PETG High-Temp Case", "OLED Screen"],
+  //     features: ["Automated temperature regulation", "Spool weight estimator", "PTC safe thermal cutoff", "Humidity and Temp sensors"],
+  //     status: "Completed",
+  //     difficulty: "Intermediate",
+  //     images: [
+  //       "https://images.unsplash.com/photo-1615840287214-7fe58a8b668f?auto=format&fit=crop&w=800&q=80",
+  //       "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"
+  //     ],
+  //     video: "https://assets.mixkit.co/videos/preview/mixkit-circuit-board-of-a-computer-close-up-23114-large.mp4",
+  //     schematics: "PTC 100W heater switched by 10A SPDT relay module on pin D4. HX711 Load Cell amplifier connected to pins D2 (DATA) and D3 (CLK). DHT22 temperature/humidity sensor on pin D5.",
+  //     codeSnippet: `#include "HX711.h"
+  // #include <DHT.h>
+
+  // #define DOUT  2
+  // #define CLK   3
+  // #define RELAY_PIN 4
+
+  // HX711 scale;
+  // DHT dht(5, DHT22);
+
+  // void setup() {
+  //   scale.begin(DOUT, CLK);
+  //   scale.set_scale(420.0); // Calibration factor
+  //   scale.tare();
+  //   dht.begin();
+  //   pinMode(RELAY_PIN, OUTPUT);
+  // }
+
+  // void loop() {
+  //   float temp = dht.readTemperature();
+  //   float hum = dht.readHumidity();
+  //   float weight = scale.get_units(5); // spool weight
+
+  //   if (temp < 45.0 && hum > 25.0) {
+  //     digitalWrite(RELAY_PIN, HIGH); // Turn heater ON
+  //   } else if (temp > 50.0 || hum < 15.0) {
+  //     digitalWrite(RELAY_PIN, LOW);  // Turn heater OFF
+  //   }
+  //   delay(2000);
+  // }`,
+  //     bom: [
+  //       { item: "Arduino Nano board", qty: 1 },
+  //       { item: "HX711 Weighing Sensor Module", qty: 1 },
+  //       { item: "5kg Load Cell Bar", qty: 1 },
+  //       { item: "100W 12V PTC Heating Element", qty: 1 },
+  //       { item: "DHT22 Humidty/Temp sensor", qty: 1 },
+  //       { item: "12V 10A Relay Module", qty: 1 },
+  //       { item: "3D Printed Spool rollers and Enclosure (PETG)", qty: 1 }
+  //     ]
+  //   }
 ];
