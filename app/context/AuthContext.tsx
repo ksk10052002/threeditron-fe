@@ -66,7 +66,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserEmail(email);
     localStorage.setItem("auth", "true");
     localStorage.setItem("userEmail", email);
-    router.push("/shop");
+    // Redirect to stored URL (e.g. /checkout) or default to /shop
+    const redirect = localStorage.getItem("redirectAfterLogin");
+    localStorage.removeItem("redirectAfterLogin");
+    router.push(redirect || "/shop");
   };
 
   const login = (email: string, password: string, username?: string) => {
@@ -83,7 +86,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const displayName = username ? username : email.split("@")[0];
         toast.success(`Welcome back ${displayName}!`);
       }
-      router.push("/shop");
+      // Redirect to stored URL (e.g. /checkout) or default to /shop
+      const redirect = localStorage.getItem("redirectAfterLogin");
+      localStorage.removeItem("redirectAfterLogin");
+      router.push(redirect || "/shop");
     } else {
       toast.error("Invalid email or password.");
     }

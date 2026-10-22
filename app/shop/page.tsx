@@ -595,11 +595,17 @@ export default function ShopPage() {
 
                     <button
                       onClick={() => {
+                        // Save cart data to localStorage so checkout page can read it
+                        localStorage.setItem('cartTotal', String(cartTotal));
+                        localStorage.setItem('cartItems', JSON.stringify(cart));
+
                         if (!isAuthenticated) {
+                          // Set redirect flag so login/signup sends user to checkout after auth
+                          localStorage.setItem('redirectAfterLogin', '/checkout');
                           router.push('/login');
                         } else {
                           setIsCartOpen(false);
-                          setIsCheckoutModalOpen(true);
+                          router.push('/checkout');
                         }
                       }}
                       className="w-full bg-yellow-500 text-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition text-center shadow-[0_0_20px_rgba(234,179,8,0.2)] block"
