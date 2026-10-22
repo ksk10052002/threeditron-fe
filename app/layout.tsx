@@ -1,4 +1,5 @@
 import "./globals.css";
+import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import Header from "./components/header";
 import Footer from "./components/footer";
@@ -8,6 +9,9 @@ import Socials from "./components/Socials/page";
 //   title: "THREEDITRON | 3D Printing Services",
 //   description: "Professional 3D Printing, Prototyping and Engineering Solutions.",
 // };
+
+import Script from "next/script";
+
 
 export const metadata = {
   title: {
@@ -88,53 +92,65 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              name: "THREEDITRON",
-              url: "https://threeditron.com",
-              logo: "https://threeditron.com/images/main-logo.png",
-              telephone: "+917209827299",
-              address: {
-                "@type": "PostalAddress",
-                addressCountry: "IN",
-                addressLocality: "Jamshedpur",
-                addressRegion: "Jharkhand",
-                // "@type": "831003, shop no. 158, Krishna road, near T.O.P, Sidhgora, Jamshedpur, Jharkhand",
-                streetAddress:
-                  "shop no. 158, Krishna road, near T.O.P, Sidhgora",
-                postalCode: "831003",
-              },
-            }),
-          }}
-        />
-      </head>
-      <body className="antialiased bg-white">
-        <Header />
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            style: {
-              background: "#111",
-              color: "#fff",
-              border: "1px solid #eab308",
-            },
-          }}
-          reverseOrder={false}
-        />
-        <main>
-          <Socials />
-          {children}
-        </main>
+    <AuthProvider>
+      <html lang="en">
+        <head>
 
-        <Footer />
-      </body>
-    </html>
+          {/* return (
+          <html lang="en">
+            <head> */}
+
+          <Script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            strategy="afterInteractive"
+          />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "LocalBusiness",
+                name: "THREEDITRON",
+                url: "https://threeditron.com",
+                logo: "https://threeditron.com/images/main-logo.png",
+                telephone: "+917209827299",
+                address: {
+                  "@type": "PostalAddress",
+                  addressCountry: "IN",
+                  addressLocality: "Jamshedpur",
+                  addressRegion: "Jharkhand",
+                  // "@type": "831003, shop no. 158, Krishna road, near T.O.P, Sidhgora, Jamshedpur, Jharkhand",
+                  streetAddress:
+                    "shop no. 158, Krishna road, near T.O.P, Sidhgora",
+                  postalCode: "831003",
+                },
+              }),
+            }}
+          />
+        </head>
+        <body className="antialiased bg-white">
+          <Header />
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              style: {
+                background: "#111",
+                color: "#fff",
+                border: "1px solid #eab308",
+              },
+            }}
+            reverseOrder={false}
+          />
+          <main>
+            <Socials />
+            {children}
+          </main>
+
+          <Footer />
+        </body>
+      </html>
+    </AuthProvider>
+
   );
 }

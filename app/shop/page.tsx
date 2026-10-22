@@ -1,13 +1,34 @@
+// "use client";
+
+// import { useState } from "react";
+// import { ShoppingCart, Search, Trash2, Plus, Minus, Check, X, ShieldAlert, Cpu, Heart } from "lucide-react";
+// import Link from "next/link";
+
+// app/shop/page.tsx – top of file
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Search, Trash2, Plus, Minus, Check, X, ShieldAlert, Cpu, Heart } from "lucide-react";
+import {
+  ShoppingCart,
+  Search,
+  Trash2,
+  Plus,
+  Minus,
+  Check,
+  X,
+  ShieldAlert,
+  Cpu,
+  Heart,
+} from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "../context/AuthContext";   // ← added
+import { useRouter } from "next/navigation";       // ← added
+
 
 interface Product {
   id: string;
   name: string;
-  category: "microcontrollers" | "sensors" | "motors" | "power" | "filaments";
+  category: "microcontrollers" | "sensors" | "motors" | "power" | "filaments" | "designs";
   price: number;
   rating: number;
   stock: number;
@@ -95,7 +116,147 @@ const productsData: Product[] = [
     stock: 55,
     image: "HC-SR04 Sensor",
     specs: ["2cm to 400cm range", "40kHz frequency", "5V operating voltage"],
-  }
+  },
+  {
+    id: "lithophane-lamps",
+    name: "Lithophane Lamps",
+    category: "designs",
+    price: 1499,
+    rating: 4.9,
+    stock: 20,
+    image: "Lithophane Lamps",
+    specs: ["Customizable photo", "LED powered", "Premium PLA"]
+  },
+  {
+    id: "personalized-lithophane-frames",
+    name: "Personalized Lithophane Photo Frames",
+    category: "designs",
+    price: 1199,
+    rating: 4.8,
+    stock: 15,
+    image: "Personalized Lithophane Photo Frames",
+    specs: ["High resolution", "LED backlight", "Custom size"]
+  },
+  {
+    id: "spiral-vases",
+    name: "Spiral Vases",
+    category: "designs",
+    price: 899,
+    rating: 4.7,
+    stock: 30,
+    image: "Spiral Vases",
+    specs: ["Elegant design", "Durable PETG", "Various heights"]
+  },
+  {
+    id: "modern-planters",
+    name: "Modern Planters",
+    category: "designs",
+    price: 1099,
+    rating: 4.8,
+    stock: 25,
+    image: "Modern Planters",
+    specs: ["Self-watering", "Eco-friendly PLA", "Various sizes"]
+  },
+  {
+    id: "personalized-nameplates",
+    name: "Personalized Nameplates",
+    category: "designs",
+    price: 699,
+    rating: 4.9,
+    stock: 40,
+    image: "Personalized Nameplates",
+    specs: ["Laser engraved", "Custom text", "Premium material"]
+  },
+  {
+    id: "custom-keychains",
+    name: "Custom Keychains",
+    category: "designs",
+    price: 299,
+    rating: 4.6,
+    stock: 60,
+    image: "Custom Keychains",
+    specs: ["Metallic finish", "Personalized engraving", "Durable"]
+  },
+  {
+    id: "mobile-phone-stands",
+    name: "Mobile Phone Stands",
+    category: "designs",
+    price: 499,
+    rating: 4.7,
+    stock: 35,
+    image: "Mobile Phone Stands",
+    specs: ["Adjustable angle", "Non-slip base", "Compact"]
+  },
+  {
+    id: "desk-organizers",
+    name: "Desk Organizers",
+    category: "designs",
+    price: 799,
+    rating: 4.8,
+    stock: 22,
+    image: "Desk Organizers",
+    specs: ["Multiple compartments", "Modern design", "Sturdy"]
+  },
+  {
+    id: "cable-organizers",
+    name: "Cable Organizers",
+    category: "designs",
+    price: 199,
+    rating: 4.5,
+    stock: 50,
+    image: "Cable Organizers",
+    specs: ["Flexible", "Reusable", "Easy clip"]
+  },
+  {
+    id: "headphone-stands",
+    name: "Headphone Stands",
+    category: "designs",
+    price: 599,
+    rating: 4.7,
+    stock: 28,
+    image: "Headphone Stands",
+    specs: ["Aluminum frame", "Cable management", "Stable base"]
+  },
+  {
+    id: "controller-stands",
+    name: "Controller Stands",
+    category: "designs",
+    price: 649,
+    rating: 4.6,
+    stock: 18,
+    image: "Controller Stands",
+    specs: ["Fit for PS, Xbox", "High quality", "Non-slip"]
+  },
+  {
+    id: "articulated-dragons",
+    name: "Articulated Dragons",
+    category: "designs",
+    price: 1599,
+    rating: 4.9,
+    stock: 10,
+    image: "Articulated Dragons",
+    specs: ["Fully poseable", "High detail", "Premium resin"]
+  },
+  {
+    id: "articulated-octopus",
+    name: "Articulated Octopus",
+    category: "designs",
+    price: 1499,
+    rating: 4.8,
+    stock: 12,
+    image: "Articulated Octopus",
+    specs: ["Multiple limbs", "Flexible joints", "Resin"]
+  },
+  {
+    id: "raspberry-pi-arduino-cases",
+    name: "Raspberry Pi & Arduino Cases",
+    category: "designs",
+    price: 1299,
+    rating: 4.7,
+    stock: 25,
+    image: "Raspberry Pi & Arduino Cases",
+    specs: ["Custom fit", "Ventilation", "Durable"]
+  },
 ];
 
 interface CartItem {
@@ -118,6 +279,9 @@ export default function ShopPage() {
     city: "",
     pincode: "",
   });
+
+  const { isAuthenticated } = useAuth();   // ← use auth state
+  const router = useRouter();
 
   const handleAddToCart = (product: Product) => {
     setCart((prev) => {
@@ -178,7 +342,7 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen bg-black text-white py-16 px-6 font-sans">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* HEADER SECTION */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
@@ -220,7 +384,7 @@ export default function ShopPage() {
 
         {/* LAYOUT CONTAINER */}
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* SIDEBAR FILTER */}
           <div className="w-full lg:w-64 shrink-0 bg-zinc-950/40 p-6 rounded-2xl border border-yellow-500/10 h-fit">
             <h3 className="text-yellow-500 font-bold text-base mb-4 flex items-center gap-2">
@@ -234,21 +398,21 @@ export default function ShopPage() {
                 { id: "motors", label: "Motors & Actuators" },
                 { id: "power", label: "Power & Chargers" },
                 { id: "filaments", label: "3D Filaments" },
+                { id: "designs", label: "3D Printed Designs" },
               ].map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`text-left px-4 py-2.5 rounded-xl text-sm transition font-semibold whitespace-nowrap lg:whitespace-normal w-fit lg:w-full ${
-                    activeCategory === cat.id
-                      ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.05)]"
-                      : "text-gray-400 hover:text-white border border-transparent hover:bg-zinc-900/50"
-                  }`}
+                  className={`text-left px-4 py-2.5 rounded-xl text-sm transition font-semibold whitespace-nowrap lg:whitespace-normal w-fit lg:w-full ${activeCategory === cat.id
+                    ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.05)]"
+                    : "text-gray-400 hover:text-white border border-transparent hover:bg-zinc-900/50"
+                    }`}
                 >
                   {cat.label}
                 </button>
               ))}
             </div>
-            
+
             <div className="mt-8 pt-6 border-t border-zinc-900 text-xs text-gray-500 space-y-2">
               <p>⚡ Fast delivery across India</p>
               <p>📦 Free shipping on orders above ₹999</p>
@@ -337,7 +501,7 @@ export default function ShopPage() {
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsCartOpen(false)}></div>
             <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
               <div className="w-screen max-w-md bg-zinc-950 border-l border-yellow-500/20 text-white flex flex-col justify-between shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-                
+
                 {/* Cart Head */}
                 <div className="px-6 py-6 border-b border-zinc-900 flex justify-between items-center bg-black">
                   <h2 className="text-xl font-bold flex items-center gap-2">
@@ -428,11 +592,15 @@ export default function ShopPage() {
                         <span className="text-yellow-500 text-lg font-black">₹{cartTotal}</span>
                       </div>
                     </div>
-                    
+
                     <button
                       onClick={() => {
-                        setIsCartOpen(false);
-                        setIsCheckoutModalOpen(true);
+                        if (!isAuthenticated) {
+                          router.push('/login');
+                        } else {
+                          setIsCartOpen(false);
+                          setIsCheckoutModalOpen(true);
+                        }
                       }}
                       className="w-full bg-yellow-500 text-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition text-center shadow-[0_0_20px_rgba(234,179,8,0.2)] block"
                     >
@@ -451,7 +619,7 @@ export default function ShopPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-sans">
             <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => { if (!orderPlaced) setIsCheckoutModalOpen(false); }}></div>
             <div className="bg-zinc-950 border border-yellow-500/20 max-w-lg w-full rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(234,179,8,0.15)] relative z-10 p-6 md:p-8">
-              
+
               {!orderPlaced ? (
                 <>
                   <div className="flex justify-between items-center mb-6">
