@@ -16,11 +16,11 @@ import {
   Minus,
   Check,
   X,
-  ShieldAlert,
   Cpu,
-  Heart,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "../context/AuthContext";   // ← added
 import { useRouter } from "next/navigation";       // ← added
 
@@ -32,7 +32,7 @@ interface Product {
   price: number;
   rating: number;
   stock: number;
-  image: string;
+  image: string[];
   specs: string[];
 }
 
@@ -44,7 +44,7 @@ const productsData: Product[] = [
     price: 349,
     rating: 4.8,
     stock: 25,
-    image: "Esp32 Devkit Board",
+    image: ["Esp32 Devkit Board"],
     specs: ["Dual-core Tensilica LX6", "Wi-Fi & Bluetooth integrated", "38 GPIO pins"],
   },
   {
@@ -54,7 +54,7 @@ const productsData: Product[] = [
     price: 499,
     rating: 4.7,
     stock: 18,
-    image: "Arduino Uno R3",
+    image: ["Arduino Uno R3"],
     specs: ["ATmega328P MCU", "14 Digital I/O, 6 Analog Input", "5V Operating Voltage"],
   },
   {
@@ -64,7 +64,7 @@ const productsData: Product[] = [
     price: 180,
     rating: 4.6,
     stock: 40,
-    image: "DHT22 Sensor Module",
+    image: ["DHT22 Sensor Module"],
     specs: ["High precision capacitive sensor", "3.3V to 6V input", "0-100% Humidity range"],
   },
   {
@@ -74,7 +74,7 @@ const productsData: Product[] = [
     price: 749,
     rating: 4.9,
     stock: 12,
-    image: "NEMA 17 Motor",
+    image: ["NEMA 17 Motor"],
     specs: ["1.8 deg Step Angle", "1.5A rated current", "4-lead wire connection"],
   },
   {
@@ -84,7 +84,7 @@ const productsData: Product[] = [
     price: 35,
     rating: 4.5,
     stock: 120,
-    image: "TP4056 Charger",
+    image: ["TP4056 Charger"],
     specs: ["1A Linear Charging Current", "With protection circuit", "Status LEDs indication"],
   },
   {
@@ -94,7 +94,7 @@ const productsData: Product[] = [
     price: 1299,
     rating: 4.9,
     stock: 15,
-    image: "Premium PLA+ Yellow",
+    image: ["Premium PLA+ Yellow",],
     specs: ["1.75mm diameter, ±0.02mm tolerance", "190°C - 220°C print temp", "High layer adhesion"],
   },
   {
@@ -104,7 +104,7 @@ const productsData: Product[] = [
     price: 99,
     rating: 4.4,
     stock: 65,
-    image: "SG90 9g Servo",
+    image: ["SG90 9g Servo"],
     specs: ["1.6kg/cm stall torque", "180 degree rotation speed", "Lightweight nylon gears"],
   },
   {
@@ -114,7 +114,7 @@ const productsData: Product[] = [
     price: 85,
     rating: 4.6,
     stock: 55,
-    image: "HC-SR04 Sensor",
+    image: ["HC-SR04 Sensor"],
     specs: ["2cm to 400cm range", "40kHz frequency", "5V operating voltage"],
   },
   {
@@ -124,7 +124,11 @@ const productsData: Product[] = [
     price: 1499,
     rating: 4.9,
     stock: 20,
-    image: "Lithophane Lamps",
+    image: ["/images/lithophanes/img-1.jpg",
+      "/images/lithophanes/img-2.jpg",
+      "/images/lithophanes/img-3.jpg",
+
+    ],
     specs: ["Customizable photo", "LED powered", "Premium PLA"]
   },
   {
@@ -134,7 +138,7 @@ const productsData: Product[] = [
     price: 1199,
     rating: 4.8,
     stock: 15,
-    image: "Personalized Lithophane Photo Frames",
+    image: ["Personalized Lithophane Photo Frames"],
     specs: ["High resolution", "LED backlight", "Custom size"]
   },
   {
@@ -144,7 +148,7 @@ const productsData: Product[] = [
     price: 899,
     rating: 4.7,
     stock: 30,
-    image: "Spiral Vases",
+    image: ["Spiral Vases"],
     specs: ["Elegant design", "Durable PETG", "Various heights"]
   },
   {
@@ -154,7 +158,7 @@ const productsData: Product[] = [
     price: 1099,
     rating: 4.8,
     stock: 25,
-    image: "Modern Planters",
+    image: ["Modern Planters"],
     specs: ["Self-watering", "Eco-friendly PLA", "Various sizes"]
   },
   {
@@ -164,7 +168,7 @@ const productsData: Product[] = [
     price: 699,
     rating: 4.9,
     stock: 40,
-    image: "Personalized Nameplates",
+    image: ["Personalized Nameplates"],
     specs: ["Laser engraved", "Custom text", "Premium material"]
   },
   {
@@ -174,7 +178,7 @@ const productsData: Product[] = [
     price: 299,
     rating: 4.6,
     stock: 60,
-    image: "Custom Keychains",
+    image: ["Custom Keychains"],
     specs: ["Metallic finish", "Personalized engraving", "Durable"]
   },
   {
@@ -184,7 +188,7 @@ const productsData: Product[] = [
     price: 499,
     rating: 4.7,
     stock: 35,
-    image: "Mobile Phone Stands",
+    image: ["Mobile Phone Stands"],
     specs: ["Adjustable angle", "Non-slip base", "Compact"]
   },
   {
@@ -194,7 +198,7 @@ const productsData: Product[] = [
     price: 799,
     rating: 4.8,
     stock: 22,
-    image: "Desk Organizers",
+    image: ["Desk Organizers"],
     specs: ["Multiple compartments", "Modern design", "Sturdy"]
   },
   {
@@ -204,7 +208,7 @@ const productsData: Product[] = [
     price: 199,
     rating: 4.5,
     stock: 50,
-    image: "Cable Organizers",
+    image: ["Cable Organizers"],
     specs: ["Flexible", "Reusable", "Easy clip"]
   },
   {
@@ -214,7 +218,7 @@ const productsData: Product[] = [
     price: 599,
     rating: 4.7,
     stock: 28,
-    image: "Headphone Stands",
+    image: ["Headphone Stands"],
     specs: ["Aluminum frame", "Cable management", "Stable base"]
   },
   {
@@ -224,7 +228,7 @@ const productsData: Product[] = [
     price: 649,
     rating: 4.6,
     stock: 18,
-    image: "Controller Stands",
+    image: ["Controller Stands"],
     specs: ["Fit for PS, Xbox", "High quality", "Non-slip"]
   },
   {
@@ -234,7 +238,7 @@ const productsData: Product[] = [
     price: 1599,
     rating: 4.9,
     stock: 10,
-    image: "Articulated Dragons",
+    image: ["Articulated Dragons"],
     specs: ["Fully poseable", "High detail", "Premium resin"]
   },
   {
@@ -244,7 +248,7 @@ const productsData: Product[] = [
     price: 1499,
     rating: 4.8,
     stock: 12,
-    image: "Articulated Octopus",
+    image: ["Articulated Octopus"],
     specs: ["Multiple limbs", "Flexible joints", "Resin"]
   },
   {
@@ -254,7 +258,7 @@ const productsData: Product[] = [
     price: 1299,
     rating: 4.7,
     stock: 25,
-    image: "Raspberry Pi & Arduino Cases",
+    image: ["Raspberry Pi & Arduino Cases"],
     specs: ["Custom fit", "Ventilation", "Durable"]
   },
 ];
@@ -263,6 +267,9 @@ interface CartItem {
   product: Product;
   quantity: number;
 }
+
+const getProductImage = (product: Product) =>
+  product.image.find((image) => image.startsWith("/"));
 
 export default function ShopPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -440,9 +447,18 @@ export default function ShopPage() {
                     className="group border border-yellow-500/10 rounded-2xl bg-zinc-950/50 p-5 flex flex-col justify-between hover:border-yellow-500/40 hover:shadow-[0_0_30px_rgba(234,179,8,0.06)] transition-all duration-300"
                   >
                     <div>
-                      {/* Stylized Component Icon Box */}
                       <div className="h-36 bg-zinc-900 rounded-xl mb-4 flex items-center justify-center border border-yellow-500/5 relative overflow-hidden group-hover:border-yellow-500/10 transition-colors">
-                        <Cpu className="text-yellow-500/20 group-hover:scale-110 group-hover:text-yellow-500/30 transition-all duration-300" size={64} />
+                        {getProductImage(product) ? (
+                          <Image
+                            src={getProductImage(product) ?? ""}
+                            alt={product.name}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <Cpu className="text-yellow-500/20 group-hover:scale-110 group-hover:text-yellow-500/30 transition-all duration-300" size={64} />
+                        )}
                         <span className="absolute bottom-2.5 left-3 text-[10px] text-gray-500 font-bold tracking-wider uppercase bg-black/60 px-2 py-0.5 rounded border border-zinc-800">
                           {product.category}
                         </span>
@@ -487,6 +503,13 @@ export default function ShopPage() {
                         <ShoppingCart size={16} />
                         <span>Add to Cart</span>
                       </button>
+                      <Link
+                        href={`/shop/${product.id}`}
+                        className="mt-3 flex items-center justify-center gap-1.5 text-xs font-bold text-yellow-500 transition hover:text-yellow-400"
+                      >
+                        View product details
+                        <ArrowRight size={14} />
+                      </Link>
                     </div>
                   </div>
                 ))}
@@ -532,8 +555,18 @@ export default function ShopPage() {
                   ) : (
                     cart.map((item) => (
                       <div key={item.product.id} className="flex gap-4 border-b border-zinc-900 pb-4">
-                        <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center shrink-0">
-                          <Cpu className="text-yellow-500/35" size={24} />
+                        <div className="relative w-16 h-16 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
+                          {getProductImage(item.product) ? (
+                            <Image
+                              src={getProductImage(item.product) ?? ""}
+                              alt={item.product.name}
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <Cpu className="text-yellow-500/35" size={24} />
+                          )}
                         </div>
                         <div className="flex-1 flex flex-col justify-between">
                           <div>
