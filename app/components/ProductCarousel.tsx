@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Cpu, Star } from "lucide-react";
 import { useRef, useState } from "react";
-import { Product, ProductCategory, productsData } from "../Shop/data";
+import { Product, ProductCategory, productsData } from "../shop/data";
 
 const printedProducts = productsData.filter(
   (product) => product.category === "designs",
@@ -91,7 +91,7 @@ function ProductCard({
   }
 
   return (
-    <Link href={`/Shop/${product.id}`} className={cardClassName}>
+    <Link href={`/shop/${product.id}`} className={cardClassName}>
       {content}
     </Link>
   );

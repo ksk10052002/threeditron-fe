@@ -40,7 +40,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           This product does not exist or is no longer available.
         </p>
         <Link
-          href="/Shop"
+          href="/shop"
           className="rounded-xl bg-yellow-500 px-6 py-2.5 font-bold text-black transition hover:bg-yellow-400"
         >
           Back to Shop
@@ -55,7 +55,7 @@ export default function ProductDetailPage({ params }: PageProps) {
     <div className="min-h-screen bg-black px-6 py-12 font-sans text-white">
       <div className="mx-auto max-w-7xl">
         <Link
-          href="/Shop"
+          href="/shop"
           className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-gray-400 transition hover:text-yellow-500"
         >
           <ArrowLeft size={16} />
@@ -151,7 +151,7 @@ export default function ProductDetailPage({ params }: PageProps) {
             </div>
 
             <Link
-              href={`/Shop?addToCart=${encodeURIComponent(product.id)}`}
+              href={`/shop?addToCart=${encodeURIComponent(product.id)}`}
               aria-disabled={!isInStock}
               className={`mt-6 flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold transition ${isInStock ? "bg-yellow-500 text-black hover:bg-yellow-400" : "pointer-events-none bg-zinc-800 text-zinc-500"}`}
             >

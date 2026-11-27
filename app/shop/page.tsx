@@ -441,7 +441,7 @@ export default function ShopPage() {
       const params = new URLSearchParams(searchParams.toString());
       params.delete("addToCart");
       const query = params.toString();
-      router.replace(query ? `/Shop?${query}` : "/Shop", { scroll: false });
+      router.replace(query ? `/shop?${query}` : "/shop", { scroll: false });
     }, 0);
     return () => window.clearTimeout(timer);
   }, [queuedProduct, router, searchParams]);
@@ -454,7 +454,7 @@ export default function ShopPage() {
       params.delete("search");
     }
     const query = params.toString();
-    router.replace(query ? `/Shop?${query}` : "/Shop", { scroll: false });
+    router.replace(query ? `/shop?${query}` : "/shop", { scroll: false });
   };
 
   const handleAddToCart = (product: Product) => {
@@ -627,7 +627,7 @@ export default function ShopPage() {
                     key={product.id}
                     className="group border border-yellow-500/10 rounded-2xl bg-zinc-950/50 p-5 flex flex-col justify-between hover:border-yellow-500/40 hover:shadow-[0_0_30px_rgba(234,179,8,0.06)] transition-all duration-300"
                   >
-                    <Link href={`/Shop/${product.id}`}>
+                    <Link href={`/shop/${product.id}`}>
 
                       <div>
                         <div className="h-36 bg-zinc-900 rounded-xl mb-4 flex items-center justify-center border border-yellow-500/5 relative overflow-hidden group-hover:border-yellow-500/10 transition-colors">
@@ -700,7 +700,7 @@ export default function ShopPage() {
                         <span>Add to Cart</span>
                       </button>
                       <Link
-                        href={`/Shop/${product.id}`}
+                        href={`/shop/${product.id}`}
                         className="mt-3 flex items-center justify-center gap-1.5 text-xs font-bold text-yellow-500 transition hover:text-yellow-400"
                       >
                         View product details

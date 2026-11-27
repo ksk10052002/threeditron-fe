@@ -64,7 +64,7 @@ export default function Checkout() {
   const handlePay = async (customerEmail: string) => {
     if (cartTotal <= 0) {
       toast.error("Your cart is empty. Please add items before checking out.");
-      router.push("/Shop");
+      router.push("/shop");
       return;
     }
 
@@ -295,7 +295,7 @@ export default function Checkout() {
 
         <button
           type="button"
-          onClick={() => router.push("/Shop")}
+          onClick={() => router.push("/shop")}
           className="w-full mt-3 text-gray-400 hover:text-white text-sm py-2 transition"
         >
           ← Back to Shop

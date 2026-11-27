@@ -19,7 +19,7 @@ export default function Navbar() {
     { href: "/", label: "Home" },
     { href: "/Stl", label: "STL Calculator" },
     { href: "/Services", label: "Services" },
-    { href: "/Shop", label: "Shop" },
+    { href: "/shop", label: "Shop" },
     { href: "/projects", label: "Projects" },
     { href: "/Contact_Us", label: "Contact" },
   ];
@@ -27,7 +27,7 @@ export default function Navbar() {
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const query = searchQuery.trim();
-    router.push(query ? `/Shop?search=${encodeURIComponent(query)}` : "/Shop");
+    router.push(query ? `/shop?search=${encodeURIComponent(query)}` : "/shop");
     setIsMenuOpen(false);
   };
 

@@ -1,4 +1,4 @@
-// Cloudflare Worker: bind DB (D1), PRODUCT_IMAGES (R2), and
+// Cloudflare Worker: bind DB (D1), threeditron-product-images (R2), and
 // CATALOG_WORKER_SECRET before deploying.
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,6 +7,7 @@ const corsHeaders = {
 };
 
 const categories = ["designs", "filaments", "microcontrollers", "sensors", "motors", "power"];
+const productImagesBinding = "threeditron-product-images";
 const json = (data, status = 200) => Response.json(data, { status, headers: corsHeaders });
 const isAdmin = (request, env) => Boolean(env.CATALOG_WORKER_SECRET) && request.headers.get("Authorization") === `Bearer ${env.CATALOG_WORKER_SECRET}`;
 
@@ -56,7 +57,8 @@ export default {
     const create = url.pathname === "/admin/products" && request.method === "POST";
     const update = url.pathname.startsWith("/admin/products/") && request.method === "PUT";
     const remove = url.pathname.startsWith("/admin/products/") && request.method === "DELETE";
-    if (request.method !== "GET" && !create && !update && !remove) return json({ error: "Method not allowed" }, 405);
+    const upload = url.pathname === "/admin/uploads" && request.method === "POST";
+    if (request.method !== "GET" && !create && !update && !remove && !upload) return json({ error: "Method not allowed" }, 405);
 
     if (url.pathname === "/products" && request.method === "GET") {
       const { results } = await env.DB.prepare(`SELECT p.id, p.slug, p.name, p.category, p.price, p.stock, p.description, p.specs, pi.r2_key, pi.alt_text, pi.position FROM products p LEFT JOIN product_images pi ON pi.product_id = p.id WHERE p.is_published = 1 ORDER BY p.created_at DESC, pi.position ASC`).all();
@@ -70,13 +72,36 @@ export default {
     }
     if (url.pathname.startsWith("/images/") && request.method === "GET") {
       const key = decodeURIComponent(url.pathname.slice("/images/".length));
-      const object = await env.PRODUCT_IMAGES.get(key);
+      const object = await env[productImagesBinding]?.get(key);
       if (!object) return json({ error: "Image not found" }, 404);
       const headers = new Headers(corsHeaders);
       object.writeHttpMetadata(headers);
       headers.set("etag", object.httpEtag);
       headers.set("Cache-Control", "public, max-age=31536000, immutable");
       return new Response(object.body, { headers });
+    }
+    if (upload) {
+      if (!isAdmin(request, env)) return json({ error: "Unauthorized" }, 401);
+      const formData = await request.formData();
+      const file = formData.get("file");
+      if (!file || typeof file !== "object" || !("arrayBuffer" in file) || typeof file.type !== "string" || !file.type.startsWith("image/")) {
+        return json({ error: "Please select an image file." }, 400);
+      }
+      const productImages = env[productImagesBinding];
+      if (!productImages) {
+        return json({ error: `R2 binding ${productImagesBinding} is not configured on this Worker.` }, 500);
+      }
+      try {
+        const safeName = (file.name || "image").replace(/[^a-zA-Z0-9._-]/g, "-");
+        const key = `products/${Date.now()}-${safeName}`;
+        await productImages.put(key, await file.arrayBuffer(), {
+          httpMetadata: { contentType: file.type },
+        });
+        return json({ success: true, key, url: imageUrl(url.origin, key) }, 201);
+      } catch (error) {
+        console.error("R2 image upload failed:", error);
+        return json({ error: `Unable to write the image to R2. Check the ${productImagesBinding} binding and R2 bucket permissions.` }, 500);
+      }
     }
     if (url.pathname === "/admin/products" && request.method === "GET") {
       if (!isAdmin(request, env)) return json({ error: "Unauthorized" }, 401);
